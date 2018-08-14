@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vuex--state</title>
+  <script src="../../node_modules/vue/dist/vue.min.js"></script>
+  <script src="../../node_modules/vuex/dist/vuex.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <counter></counter>
+  </div>
+</body>
+<script>
+  //通过script引入的vuex不需要vue.use()调用,因为在vuex.min.js已经有调用过
+  //定义组件
+  const counter={
+    template:`
+      <div>{{count}}</div>
+    `,
+    computed:{
+      count(){
+        return this.$store.state.count;
+      }
+    }
+  };
+  const store=new Vuex.Store({
+    state:{
+      count:15
+    }
+  });
+  new Vue({
+    el:"#app",
+    store,
+    data:{
+      msg:'vuex的使用'
+    },
+    components:{
+      counter
+    }
+  })
+</script>
+</html>

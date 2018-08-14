@@ -1,0 +1,30 @@
+{
+  "status" : "0",
+  "msg" : "",
+  "result" : [
+    {
+      "productId" : "10010",
+      "productName" : "小音响",
+      "productPrice" : "199",
+      "productImg" : "1.jpg"
+    },
+    {
+      "productId" : "10011",
+      "productName" : "小耳机",
+      "productPrice" : "99",
+      "productImg" : "2.jpg"
+    },
+    {
+      "productId" : "10012",
+      "productName" : "小头戴大耳机",
+      "productPrice" : "399",
+      "productImg" : "3.jpg"
+    },
+    {
+      "productId" : "10013",
+      "productName" : "小头戴小耳机",
+      "productPrice" : "299",
+      "productImg" : "4.jpg"
+    }
+  ]
+}

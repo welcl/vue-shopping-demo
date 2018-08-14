@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vuex--action</title>
+  <script src="../../node_modules/vue/dist/vue.min.js"></script>
+  <script src="../../node_modules/vuex/dist/vuex.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <a href="javascript:;" @click="add">add</a>
+  <counter></counter>
+</div>
+</body>
+<script>
+  //通过script引入的vuex不需要vue.use()调用,因为在vuex.min.js已经有调用过
+  //定义组件
+  const counter={
+    template:`
+       <div>
+          <div>state:{{count}}</div>
+          <div>name:{{this.$store.state.name}}</div>
+          <div>userName:{{userName}}</div>
+        </div>
+    `,
+    computed:{
+      //可以在子组件计算属性先返回结果,然后把计算属性写在子组件页面中
+      //也可以在拿到state值后直接写在页面中,但是建议用上一种方法
+      count(){
+        return this.$store.state.count;
+      },
+      userName(){
+        return this.$store.getters.userName;
+      }
+    }
+  };
+  const store=new Vuex.Store({
+    state:{
+      count:15,
+      name:'lcl',
+    },
+    //getters延伸state的状态,无法改变state的状态
+    getters:{
+      userName(state){
+        return state.name+'  hello world';
+      }
+    },
+    mutations:{
+      increment(state,n){
+        state.count+=n;
+      },
+      updateName(state,value){
+        state.name=value;
+      }
+    },
+    //actions可有可无,根据是否需要异步操作决定,state和mutations必须要有
+    actions:{
+      incrementAction(context,num){
+        //异步 操作,5秒后加100
+        setTimeout(function(){
+          context.commit('increment',num);
+        },5000);
+      }
+    }
+  });
+  new Vue({
+    el:"#app",
+    store,
+    data:{
+      msg:'vuex的使用'
+    },
+    methods:{
+      add(){
+        this.$store.commit('increment',10);
+        this.$store.commit('updateName','zxq');
+        this.$store.dispatch("incrementAction",100);
+      }
+    },
+    components:{
+      counter
+    }
+  })
+</script>
+</html>

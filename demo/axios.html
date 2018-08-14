@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>axios实例</title>
+  <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+  <script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
+</head>
+<body>
+<div id="app">
+  <h1>vaxios插件讲解</h1>
+  <div>{{msg}}</div>
+  <a href="javascript: " @click="get">get请求</a><br>
+  <a href="javascript: " @click="post">post请求</a><br>
+  <a href="javascript: " @click="http">http请求</a><br>
+</div>
+<script>
+  new Vue({
+    el:"#app",
+    data:{
+      msg:''
+    },
+    mounted(){
+      //全局拦截器配置  可以在这里写loading等效果
+      //请求之前
+        axios.interceptors.request.use(function(config){
+          console.log('request init');
+          return config;
+        });
+      //请求成功后
+      axios.interceptors.response.use(function(response){
+        console.log('response init');
+        return response;
+      })
+
+    },
+    methods:{
+      //get请求
+      get(){
+        axios.get('../package.json',{
+          params:{
+            userId:123
+          },
+          headers:{
+            token:'abc'
+          }
+        }).then(res=>{
+          this.msg=res.data;
+        }).catch(error=>{
+         this.msg=error;
+        })
+      },
+      //post请求
+      post(){
+          axios.post('../package.json',{
+            userId:456
+          },{
+              headers:{
+                token:'def'
+              }
+          }).then(res=>{
+            this.msg=res.data;
+          }).catch(error=>{
+            this.msg=error;
+          })
+      },
+      http(){
+        //通过配置使用axios
+          axios({
+            url:'../package.json',
+            method:'get',
+            data:{
+              //只有在用post请求时data这样的userId才能渠道,用get取不到
+              userId:456
+            },
+            params:{
+              userId:123
+            },
+            headers:{
+              token:'def'
+            }
+          }).then(res=>{
+            this.msg=res.data;
+          }).catch(error=>{
+            this.msg=error;
+          })
+      }
+    }
+  })
+</script>
+</body>
+
+</html>

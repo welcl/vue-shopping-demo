@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue-resource实例</title>
+  <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+  <script src="https://cdn.bootcss.com/vue-resource/1.5.1/vue-resource.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>vue-resource插件讲解</h1>
+      <div>{{msg}}</div>
+        <a href="javascript: " @click="get">get请求</a><br>
+        <a href="javascript: " @click="post">post请求</a><br>
+        <a href="javascript: " @click="jsonp">jsonp请求</a><br>
+    </div>
+<script>
+      new Vue({
+        el:"#app",
+        data:{
+            msg:''
+        },
+        mounted(){
+          全局拦截器:
+          Vue.http.interceptors.push(function (request,next){
+            console.log("request init:请求完成之前调用可以在这里写一些loading处理");
+            next(function(response){
+              console.log("response init:请求完成之后调用");
+              return response;
+            })
+          })
+        },
+        http:{
+          //公共地址配置
+          root:'http://localhost:63342/vue2.0+node.js+mongodb/shopping/'
+        },
+        methods:{
+          //get请求
+          get(){
+              this.$http.get('package.json',{
+                  params:{
+                    userId:101,
+                  },
+                headers:{
+                    token:'abcdefg'
+                }
+              }).then(res =>{
+                this.msg=res.data;
+              },error=>{
+                this.msg=error;
+              })
+          },
+          //post请求
+          post(){
+            this.$http.post('package.json',{
+              userId:102
+            },{
+              headers:{
+                access_token:'aaaaa'
+              }
+            }).then(res=>{
+              this.msg=res.data;
+            },error=>{
+              this.msg=error;
+            })
+          },
+          //jsonp请求
+          jsonp(){
+            this.$http.jsonp('http://www.imooc.com/course/AjaxCourseMembers?ids=796').then(res=>{
+              this.msg=res.data;
+            })
+          },
+        }
+      })
+</script>
+</body>
+
+</html>

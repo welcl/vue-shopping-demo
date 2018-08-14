@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>promise</title>
+</head>
+<body>
+     <script>
+        let checkLogin = function(){
+           return  new Promise(function (resolve,reject){
+             let  flag = document.cookie.indexOf('userId')?true:false;
+             if(flag){
+               resolve({
+                 status:0,
+                 result:true
+               })
+             }else{
+               //reject()报错是指代码运行中的报错,和登录失败报错不一样,登录失败报错,服务器和接口都是返回正常,reject报错可能是接口错误或者服务器挂了
+               reject("error");
+             }
+           })
+        }
+        let getUserInfo = ()=>{
+          return new Promise((resolve,reject) =>{
+            let userInfo = {
+              userId : "101"
+            };
+            resolve(userInfo);
+          })
+        }
+        checkLogin().then((res1)=>{
+          if(res1.status==0){
+            console.log("login success");
+            console.log(`res1:${res1.status}`);
+            return getUserInfo();
+          }
+        }).catch((error)=>{
+          console.log(`error:${error}`)
+        }).then((res2) =>{
+          console.log(`res2:${res2.userId}`);
+        })
+      //Promise的all方法提供了并行执行异步操作的能力，并且在所有异步操作执行完后才执行回调。
+        //用Promise.all来执行，all接收一个数组参数，里面的值最终都算返回Promise对象
+        Promise.all([checkLogin(),getUserInfo()]).then(([res1,res2]) =>{
+          console.log(`res1:${res1.status},res2:${res2.userId}`);
+         })
+     </script>
+</body>
+</html>

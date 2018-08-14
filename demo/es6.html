@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ES6demo演示</title>
+  <style>
+      .log{
+        background:black;
+        color:white;
+        padding:10px 20px;
+      }
+  </style>
+</head>
+<body>
+  <h2>es6demo演示</h2>
+  <div id="log" class="log"></div>
+  <script>
+    var str=`
+    //变量:
+    var 和let的区别:
+      console.log("a:"+a); //a:undefined
+      var a=1;
+      console.log("b:"+b);//b报错 b is not  defined
+      let b=2;
+      //为什么会出现这种情况呢?主要是var 具有变量提升的作用,提升为
+      // var a;
+      // console.log("a:"+a);
+      // a=1;
+      // 而用let定义的是块作用域,没有变量提升的功能
+
+      //块级作用域
+      {
+        let a =1;
+        var b =2;
+      }
+      console.log("b:"+b); //b:2
+      console.log('a:'+a);// a is not defined
+    //因为let是块级作用域,var是函数级作用域,所以var在块级外还能生效,而let则脱离块级作用域就失效了
+
+    let和const的区别:
+    let  a=1;
+    const b=2;
+    a=3;
+    console.log(a); //a=3;
+    b=4;//Assignment to constant variable.报错:不能被改变
+    console.log(b);
+
+    //let定义的变量可以被改变,const定义的是常量:一般无法改变,除非定义的是对象;可以改变对象里的值,但是不能改变对象的引用
+    const b={a:1};
+    b.a=2;
+    console.log(b.a);//2
+    b={c:1}//就会报错,因为这改变了对象的引用地址
+      `
+    printLog(str);
+
+    //模板语言
+    let username = 'jack';
+    printLog(`i am ${username}`);
+
+    //函数的默认参数
+    function add(flag=true){
+      if(flag){
+        return 'true';
+      }else{
+        return 'false';
+      }
+    }
+    console.log(add());
+    //在这个函数中,如果不舍这flag=true的话,一旦调用函数时忘记了传flag=true或者flag=false这个参数函数就会报错
+    //这个时候设置一个默认参数在函数声明的时候,可以有效的防止这种事情的发生.
+
+    //箭头函数
+    //使用箭头函数不会创建新的作用域,所以不会出现以前那种var _that=this,在新函数中更使用_that的情况
+    var  arr=[3,6,9];
+    var newArr=arr.map(function(item){
+      return item+2;
+    })
+    console.log("newArr:"+newArr);
+    //使用箭头函数后
+    var newArr1=arr.map((item)=> item+2);
+    console.log("newArr1:"+newArr1);
+
+    //数组,字符串,对象,函数的解构
+   // ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）, 而数组的解构赋值是从数组中提取值，按照对应位置，对变量赋值。
+    //数组的解构
+    var [a,b] = [1,2];
+    console.log("a:"+a,"b:"+b);//a:1,b:2
+    //字符串的解构
+    var [x,y,z] ="vue";
+    console.log(`x:${x} y:${y} z;${z}`);//x:v y:u z;e
+    //对象的解构
+    var {m,n} ={m:10,n:20};
+    console.log(`m:${m} n;${n}`);//m:10 n;20
+    //函数的解构
+    function sum([q,w]){
+      return q+w;
+    }
+    var total=sum([15,25]);
+    console.log(`total:${total}`);//total:40
+
+    function printLog(str){
+      document.getElementById('log').innerText+=str;
+    }
+  </script>
+</body>
+</html>

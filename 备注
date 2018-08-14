@@ -1,0 +1,2265 @@
+第一章:课程介绍:
+    1.课程概述:
+        1.课程主要讲了什么:
+          基于全栈开发一个简易的商城系统
+        2.课程涵盖了哪些功能:
+          商品列表,购物车,地址,结算,订单以及登录模块
+        3:课程使用到了哪些技术栈:
+          前端使用Vue全家桶和ES6
+          后端使用express框架,Mongodb
+     2.项木整体架构
+         前端:
+            视图层: 商品列表,购物车,地址列表,商品结算,订单成功
+            公共组件:vue-router,Axios,Vuex,Util,依赖, Vue,js-MVVM
+            工具支持:vue-cli,webpack .....
+         后端:node   express
+         数据库:MongoDB
+          MVC:
+                视图（View）：用户界面.
+                控制器（Controller）：业务逻辑
+                模型（Model）：数据保存
+              各部分之间的通信方式如下:
+                view->controller->model->view;
+                1.View 传送指令到 Controller
+                2.Controller 完成业务逻辑后，要求 Model 改变状态
+                3.Model 将新的数据发送到 View，用户得到反馈
+                所有通信都是单向的
+                接受用户指令时，MVC 可以分成两种方式。一种是通过 View 接受指令，传递给 Controller。
+                另一种是直接通过controller接受指令。
+          MVP:
+                MVP 模式将 Controller 改名为 Presenter，同时改变了通信方向。
+                view<-->persenter<-->Model
+                1. 各部分之间的通信，都是双向的
+                2. View 与 Model 不发生联系，都通过 Presenter 传递。
+                3. View 非常薄，不部署任何业务逻辑，称为"被动视图"（Passive View），即没有任何主动性，而 Presenter非常厚，所有逻辑都部署在那里。
+          MVVM:
+                MVVM 模式将 Presenter 改名为 ViewModel，基本上与 MVP 模式完全一致。
+                view<-->viewModel<-->model
+                唯一的区别是，它采用双向绑定（data-binding）：View的变动，自动反映在 ViewModel，反之亦然。Angular 和 Ember 都采用这种模式
+      3.vue概况以及核心思想
+          1.vue本身并不是一个框架
+          2.vue结合周边生态构成一个灵活的,渐进式的框架
+          3.核心思想:
+                1.数据驱动
+                2.组件化
+       4.vue的优点和缺点
+            Angular提供的更多的是一整套解决方案,而vue更像是一个生态
+            vue和react对比
+                vue和react目前都是用了Virtual Dom
+                speed         vue             react
+                fastest        23ms          63ms
+                median      42ms          81ms
+                average     51ms          94ms
+                95th perc   73ms         164ms
+                slowest       343ms       453ms
+              vue :                                                               react:
+                 1模板和渲染函数的弹性选择                        1.更适合大型应用和更好的可测试性
+                 2.简单的语法以及项目创建                           2.同时适用于web端和原生App
+                 3.更快的渲染速度和更小的体积                   3.更大的生态圈带来的更多支持和工具
+              vue和react相同点:
+                  1.利用虚拟dom实现快速渲染
+                  2.轻量级
+                  3.响应式组件
+                  4.支持服务器端渲染
+                  5.易于集成路由工具,打包工具以及状态管理工具
+                  6.优秀的支持和社区
+  第二章: vue基础
+  第三章: vue-router
+        (1)路由基础介绍:
+          1.什么是前端路由:
+              路由是根据不同的url地址展示不同的页面或内容
+              前端路由就是把不同路由对应不同的内容或页面的任务交给前端来做,后端路由是通过
+              服务器根据url的不同返回不同的页面实现的
+          2.什么时候使用前端路由?
+               在单页面应用,大部分页面结构不变,只改变部分内容的时候使用
+         (2)前端路由优缺点:
+            优点:用户体验好,不需要每次都从服务器全部获取,能快速展现给用户
+            缺点:
+                  1.不利于SEO
+         (3)动态路由匹配:
+              动态路由:即根据路由的约定来实现页面的显示,比如在router/index.js中如果设置path: '/goods ,则你只需要输入goods路径
+              去匹配,后边随便输入都可访问到页面,如果设置了path: '/goods/:id/user/:username',这种匹配条件很多的,则你必须在路径
+              中输入goods后加id并且user后加username后才可访问到此页面,
+        (4)嵌套路由:(路由嵌套路由:一般用在有层级结构的地方,比如三级目录等)
+              嵌套路由记得要在父路由中写上<router-view></router-view>,只有这样才能跳转到子路由
+        (5)编程式路由:
+            什么是编程式路由:
+              通过js来实现页面跳转:
+               $router.push("name")
+               $router.push({path:"name")
+               $router.push({path:"name?a=123"})或者 $router.push({path:"name",query:{a:123})
+               $router.go(1)(前进) $router.go(-1)(后退) $router.go(0)(刷新)
+
+          1.$router和$router区别:
+              注意:传参是this.$router,接收参数是this.$route,这里千万要看清了！！！(接收参数的this可省略)
+              $router为VueRouter实例，想要导航到不同URL，则使用$router.push方法
+             $router为当前router跳转对象，里面可以获取name、path、query、params等
+          2.params传参和query传参区别:
+               使用编程式路由的时候,传参要使用$router.push("xxx");接收参数要使用$route.query.xxx或者$route.params.xxx
+              1..params方式传参和接收参数
+                    传参:
+                    this.$router.push({
+                            name:'xxx'  //name为你在router/index.js中设置的,
+                            params:{
+                              id:123
+                            }
+                          })
+                    接收参数:
+                    this.$route.params.id
+                    注意:params传参，push里面只能是 name:'xxxx',不能是path:'/xxx',因为params只能用name来引入路由，如果这里写成了path，接收参数页面会是undefined！！！
+               2.query方式传参和接收参数
+                  传参:
+                  this.$router.push({
+                          path:'/xxx'
+                          query:{
+                            id:456
+                          }
+                        })
+
+                  接收参数:
+                  this.$route.query.id
+                  注意:
+                  1.二者还有点区别，直白的来说query相当于get请求，页面跳转的时候，可以在地址栏看到请求参数，而params相当于post请求，参数不会再地址栏中显示
+                  2.通过query接收的参数,在页面刷新时依然存在,但是通过params接收的参数,在页面刷新的时候就会消失
+           (6)命名路由和命名视图
+              命名路由:就是 <router-link  :to="{name:'cart',params:{id:666}}">命名路由的跳转</router-link>  通过name命名路径跳转,
+              命名视图:就是 <router-view></router-view>
+                                        <router-view class="left" name="title"></router-view>
+                                      <router-view class="right" name="img"></router-view>
+                             需要在router/index.js中设置路径下的components:{default:GoodsList,title:Title,img:Img}
+   第四章:Vue-resource和Axios
+        1.vue-resource: vue-resource插件已将挂载到vue中了
+              简书介绍(https://www.jianshu.com/p/ed9e98731d96)
+            vue-resource中提供的方法
+                get(url, [options])
+                head(url, [options])
+                delete(url, [options])
+                jsonp(url, [options])
+                post(url, [body], [options])
+                put(url, [body], [options])
+                patch(url, [body], [options])
+          options对象:
+              发送请求时的options选项对象包含以下属性
+                    参数	                              类型	                                                  描述
+                    url	                                  string	                                                请求的URL
+                    method	                        string	                                                请求的HTTP方法，例如：'GET', 'POST'或其他HTTP方法
+                    body	                              Object, FormData string	              request body
+                    params	                        Object	                                             请求的URL参数对象
+                    headers	                        Object	                                              request header
+                    timeout	                        number	                                            单位为毫秒的请求超时时间 (0 表示无超时时间)
+                    before	                          function(request)	                          请求发送前的处理函数，类似于jQuery的beforeSend函数
+                    progress	                      function(event)	                              ProgressEvent回调处理函数
+                    credientials                  	boolean	                                             表示跨域请求时是否需要使用凭证
+                    emulateHTTP	              boolean	                                            发送PUT, PATCH, DELETE请求时以HTTP POST的方式发送，并设置请求头的X-HTTP-Method-Override
+                    emulateJSON	              boolean                                           	将request body以application/x-www-form-urlencoded content type发送
+           1.get请求:
+                            get(){
+                                  this.$http.get('package.json',{
+                                      params:{
+                                        userId:101,
+                                      },
+                                    headers:{
+                                        token:'abcdefg'
+                                    }
+                                  }).then(res =>{
+                                    this.msg=res.data;
+                                  },error=>{
+                                    this.msg=error;
+                                  })
+                              },
+            2.post请求:
+                            post(){
+                                    this.$http.post('package.json',{
+                                      userId:102
+                                    },{
+                                      headers:{
+                                        access_token:'aaaaa'
+                                      }
+                                    }).then(res=>{
+                                      this.msg=res.data;
+                                    },error=>{
+                                      this.msg=error;
+                                    })
+                                  },
+             3.jsonp请求:
+                            jsonp(){
+                                       this.$http.jsonp('http://www.imooc.com/course/AjaxCourseMembers?ids=796').then(res=>{
+                                         this.msg=res.data;
+                                       })
+                                     }
+              4.全局拦截器:
+                  在mounted:中使用:
+                      Vue.http.interceptors.push(function (request,next){
+                           console.log("request init:请求完成之前调用可以在这里写一些loading处理");
+                          next(function(response){
+                              console.log("response init:请求完成之后调用");
+                            return response;
+                          })
+                      })
+                      当我们请求的接口比较多,且路径都有公共的地址时,可以在mounted平级的地方写一个:
+                      http:{
+                                root:'http://localhost:63342/vue2.0+node.js+mongodb/shopping/'
+                              },
+                       然后在get,post请求中,写入接下来的地址就可以了~
+        2.axios基础介绍:axios并没有挂载到vue中,是个独立的
+             简书介绍(https://www.jianshu.com/p/df464b26ae58)
+              vue-resource已不再是vue官方推荐的插件,取而代之的是axios.
+            1.get请求:
+                      get(){
+                        axios.get('../package.json',{
+                          params:{
+                            userId:123
+                          },
+                          headers:{
+                            token:'abc'
+                          }
+                        }).then((res)=>{
+                          this.msg=res.data;
+                        }).catch((error)=>{
+                         this.msg=error;
+                        })
+                      },
+              2.post请求:
+                  post(){
+                            axios.post('../package.json',{
+                              userId:456
+                            },{
+                                headers:{
+                                  token:'def'
+                                }
+                            }).then((res)=>{
+                              this.msg=res.data;
+                            }).catch((error)=>{
+                              this.msg=error;
+                            })
+                        },
+               3.http(全局配置请求):
+                      http(){
+                              //通过配置使用axios
+                                axios({
+                                  url:'../package.json',
+                                  method:'get',
+                                  data:{
+                                    //只有在用post请求时data这样的userId才能渠道,用get取不到
+                                    userId:456
+                                  },
+                                  params:{
+                                    userId:123
+                                  },
+                                  headers:{
+                                    token:'def'
+                                  }
+                                }).then(res=>{
+                                  this.msg=res.data;
+                                }).catch(error=>{
+                                  this.msg=error;
+                                })
+                            }
+                4.全局拦截器配置:
+                        //请求之前
+                            axios.interceptors.request.use(function(config){
+                              console.log('request init');
+                              return config;
+                            });
+                          //请求成功后
+                          axios.interceptors.response.use(function(response){
+                            console.log('response init');
+                            return response;
+                          })
+    第五章:es6常用语法:
+        es6常用命令介绍:
+           1:let和const命令:
+                    var 和let的区别:
+                      console.log("a:"+a); //a:undefined
+                      var a=1;
+                      console.log("b:"+b);//b报错 b is not  defined
+                      let b=2;
+                      //为什么会出现这种情况呢?主要是var 具有变量提升的作用,提升为
+                      // var a;
+                      // console.log("a:"+a);
+                      // a=1;
+                      // 而用let定义的是块作用域,没有变量提升的功能
+                      //块级作用域
+                      {
+                        let a =1;
+                        var b =2;
+                      }
+                      console.log("b:"+b); //b:2
+                      console.log('a:'+a);// a is not defined
+                    //因为let是块级作用域,var是函数级作用域,所以var在块级外还能生效,而let则脱离块级作用域就失效了
+
+                    let和const的区别:
+                    let  a=1;
+                    const b=2;
+                    a=3;
+                    console.log(a); //a=3;
+                    b=4;//Assignment to constant variable.报错:不能被改变
+                    console.log(b);
+                    //let定义的变量可以被改变,const定义的是常量:一般无法改变,除非定义的是对象;可以改变对象里的值,但是不能改变对象的引用
+                    const b={a:1};
+                    b.a=2;
+                    console.log(b.a);//2
+                    b={c:1}//就会报错,因为这改变了对象的引用地址
+
+           2:模板语言:
+                1.用` `来拼接字符串
+                2.用${变量名}来输出变量
+                   //模板语言
+                    let username = 'jack';
+                    console.log(`i am ${username}`);
+           3:字符串,对象,数组和函数的解构
+                  //数组,字符串,对象,函数的解构
+                     // ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）, 而数组的解构赋值是从数组中提取值，按照对应位置，对变量赋值。
+                      //数组的解构
+                      var [a,b] = [1,2];
+                      console.log("a:"+a,"b:"+b);//a:1,b:2
+                      //字符串的解构
+                      var [x,y,z] ="vue";
+                      console.log(`x:${x} y:${y} z;${z}`);//x:v y:u z;e
+                      //对象的解构
+                      var {m,n} ={m:10,n:20};
+                      console.log(`m:${m} n;${n}`);//m:10 n;20
+                      //函数的解构
+                      function sum([q,w]){
+                        return q+w;
+                      }
+                      var total=sum([15,25]);
+                      console.log(`total:${total}`);//total:40
+           4.rest参数和函数的扩展
+                    //函数的默认参数
+                      function add(flag=true){
+                        if(flag){
+                          return 'true';
+                        }else{
+                          return 'false';
+                        }
+                      }
+                      console.log(add());
+                      //在这个函数中,如果不舍这flag=true的话,一旦调用函数时忘记了传flag=true或者flag=false这个参数函数就会报错
+                      //这个时候设置一个默认参数在函数声明的时候,可以有效的防止这种事情的发生.
+
+           5.箭头函数
+                  //箭头函数
+                      //使用箭头函数不会创建新的作用域,所以不会出现以前那种var _that=this,在新函数中更使用_that的情况
+                      var  arr=[3,6,9];
+                      var newArr=arr.map(function(item){
+                        return item+2;
+                      })
+                      console.log("newArr:"+newArr);
+                      //使用箭头函数后
+                      var newArr1=arr.map((item)=> item+2);
+                      console.log("newArr1:"+newArr1);
+           6.promise的用法:
+              promise用法介绍可参考:(https://blog.csdn.net/shan1991fei/article/details/78966297);
+               什么是promise(承诺):
+                  Promise是异步编程的一种解决方案，比传统的解决方案（回调函数和事件）更合理更强大
+                  所谓Promise，简单说就是一个容器，里面保存着某个未来才会结束的事件 (通常是一个异步操作)的结果。
+                  从语法上说，Promise是一个对象，从它可以获取异步操作的消息
+                  有三种状态：Pending(进行中)、Resolved(已完成)和Rejected(已失败)
+                  有了Promise对象，就可以把异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数。此外，Promise对象提供了统一的接口，使得控制异步操作更加容易。
+                  promise是一个构造函数,自身有resolve,reject,all这几个眼熟的方法:原型上有then,catch等眼熟的方法
+                  示例:判断缓存中是否有userId,如果有则显示登陆成功,没有则报错(这里为了演示没有适合调用reject,其实正常来说reject是在接口,或者服务器报错中使用的)
+                <script>
+                        let checkLogin = function(){
+                           return  new Promise(function (resolve,reject){
+                             let  flag = document.cookie.indexOf('userId')?true:false;
+                             if(flag){
+                               resolve({
+                                 status:0,
+                                 result:true
+                               })
+                             }else{
+                               //reject()报错是指代码运行中的报错,和登录失败报错不一样,登录失败报错,服务器和接口都是返回正常,reject报错可能是接口错误或者服务器挂了
+                               reject("error");
+                             }
+                           })
+                        }
+                        let getUserInfo = ()=>{
+                          return new Promise((resolve,reject) =>{
+                            let userInfo = {
+                              userId : "101"
+                            };
+                            resolve(userInfo);
+                          })
+                        }
+                        //链式操作的用法
+                        checkLogin().then((res1)=>{
+                          if(res1.status==0){
+                            console.log("login success");
+                            console.log(`res1:${res1.status}`);
+                            return getUserInfo();
+                          }
+                        }).catch((error)=>{
+                          console.log(`error:${error}`)
+                        }).then((res2) =>{
+                          console.log(`res2:${res2.userId}`);
+                        })
+                        //Promise的all方法提供了并行执行异步操作的能力，并且在所有异步操作执行完后才执行回调。
+                        //用Promise.all来执行，all接收一个数组参数，里面的值最终都算返回Promise对象
+                                Promise.all([checkLogin(),getUserInfo()]).then(([res1,res2]) =>{
+                                 console.log(`res1:${res1.status},res2:${res2.userId}`);
+                          })
+                     </script>
+            7.模块化开发:export,export default , import
+                        1:export和import    export和import（一个导出一个导入）
+                            export用于对外输出本模块（一个文件可以理解为一个模块）变量的接口
+                            import用于在一个模块中加载另一个含有export接口的模块.
+                            也就是说使用export命令定义了模块的对外接口以后，其他JS文件就可以通过import命令加载这个模块（文件）。这几个都是ES6的语法
+                        2:export与export default:
+                            1、export与export default均可用于导出常量、函数、文件、模块等
+                            2、你可以在其它文件或模块中通过import+(常量 | 函数 | 文件 | 模块)名的方式，将其导入，以便能够对其进行使用
+                            3、在一个文件或模块中，export、import可以有多个，export default仅有一个
+                            4、通过export方式导出，在导入时要加{ }，export default则不需要
+            8.AMD,CMD,CommonJs和ES6对比:
+                    1.AMD
+                        AMD是RequireJs在推广过程中对模块定义的规范化产出。
+                        特点是：依赖前置,异步模块定义
+                     2.CMD
+                        CMD是SeaJs在推广过程中对模块定义的规范化产出。
+                        特点是：淘宝团队提供，依赖就近，同步概念即用即加载模块。
+                     3.CommonJs规范，
+                        为JS的表现来制定规范，因为js没有模块的功能所以CommonJS应运而生，它希望js可以在任何地方运行，不只是浏览器中。
+                        同步
+                        CommonJS规范 通过model.exports定义的，在前端浏览器中并不支持,特点是nodeJs后台采用的规范
+                        NodeJS是CommonJS规范的实现，webpack 也是以CommonJS的形式来书写的
+                        CommonJS定义的模块分为: 模块引用(require) ； 模块定义(exports) ； 模块标识(module)
+                    4.ES6特性export/import
+                        上面的AMD,CMD,CommonJs都是ES5时期的。
+                          ES6中无需引入别的js文件，ES6 在语言标准的层面上，实现了模块功能，而且实现得相当简单，完全可以取代 CommonJS 和 AMD 规范，成为浏览器和服务器通用的模块解决方案。
+                          ES6 模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。CommonJS 和 AMD 模块，都只能在运行时确定这些东西
+  第六章:商品列表模块实现:
+        1.mock数据:
+              开发中为了提高开发效率,通常采用前后端分离的开发方式,这时候前端就要使用mock数据来模拟后端数据了!
+              vue2.0中只有(webpack.dev.conf.js)情况下,在webpack.dev.conf.js中操作流程:
+                1.通常利用express搭建服务器,
+                var express = require('express');
+                2.声明一个express对象:
+                var app= express();
+                3.引入mock的xxx.json文件
+                var goodsData = require('../../xxx.json');
+                4.创建路由
+                 var router = express.Router();
+                5.调用路由
+                 app.use('/api', router);
+                6.在devServer: {}内部写入before(){}
+                devServer:{
+                 before(app){
+                      app.get('/api/goods',function(req,res){
+                        res.json(goodsData);
+                      })
+                    }
+                }
+                7.在组件中利用vue-resource或者axios获取数据(记得在组件中先引入对应插件)
+                vue-resource:
+                  this.$http.get('/api/goods').then((res)=>{
+                    console.log(res.body.data);//将数据转化为json形式
+                  })
+                axios:
+                    axios.get('/api/goods').then((res)=>{
+                                console.log(res.data);
+                      })
+                   }
+         2.图片懒加载插件(vue-lazyload)
+            vue-lazyload插件的npm地址:https://www.npmjs.com/package/vue-lazyload
+            插件使用方法:
+              1.npm安装:cnpm install vue-lazyload --save
+              2.main.js或者index.js引入插件:
+                  import VueLazyload from 'vue-lazyload';
+              3.使用插件
+                  Vue.use(VueLazyload,{
+                      loading:'static/loading-svg/loading-bars.svg',
+                      //loading的地址
+                  })
+               4.在需要图片懒加载的地方把v-bind:src改为v-lazy
+               v-lazy有一个重中之重的坑需要填。
+                   当图片的数据更新时，举个栗子，你设置了翻页功能，且每一页都是请求的数据进行渲染。
+                   你会发现一个神奇的事情，那就是其他的数据都变了，唯独图片还是原来的图片。需要加一个：key值才可以
+
+   第七章:Node.js学习
+        1.node.js安装:
+             windows和mac系统的安装都是在官网下载后傻瓜式安装,唯有linux系统下安装比较特殊
+             linux下的安装可自行百度
+        2.node基础编程:
+            1.基于Chrome V8引擎
+            2.单线程
+            3.使用JavaScript开发后端代码
+            4.非阻塞的IO
+        3.利用node.js搭建一个服务器:
+            Demo.js:
+              //引入http模块
+              let  http = require('http');
+              //引入url网址模块
+              let  url = require ('url');
+              //引入实用工具
+              let util = require ('util');
+              //新建一个服务器,设置请求参数,监听端口
+               let  server = http.createServer((req,res)=>{
+                 res.statusCode =200;
+                 res.setHeader("Content-Type","text/plain; charset=utf-8");
+                 console.log("url:"+req.url);// /heoll.html?a=123
+                 //url.parse()把url网址转成对象
+                 console.log("url.parse:"+url.parse(req.url));//[object Object]
+                 //util.inspect把url网址转成字符串形式,主要用于调试,实际开发没啥用
+                 console.log("url.inspect:"+util.inspect(url.parse(req.url)));
+                 // Url {
+                 // protocol: null,
+                 //   slashes: null,
+                 //   auth: null,
+                 //   host: null,
+                 //   port: null,
+                 //   hostname: null,
+                 //   hash: null,
+                 //   search: '?a=123',
+                 //   query: 'a=123',
+                 //   pathname: '/heoll.html',
+                 //   path: '/heoll.html?a=123',
+                 //   href: '/heoll.html?a=123' }
+              res.end(util.inspect(url.parse('http://127.0.0.1:3000/heoll.html?a=123')));
+               })
+              server.listen(3000,'127.0.0.1',()=>{
+                console.log("服务器已经运行,请打开浏览器,输入http://127.0.0.1:3000 访问" );
+              })
+         4.node.js定义路由方式,(当我们在目录中有相应路由的文件,在客户端访问的时候,fs会把内容读取到并返回到页面上)
+            Server.js:
+              //利用fs模块访问index.html文件,并且把内容输出到客户端,(定义路由的方式)
+              //引入http模块
+              let  http = require('http');
+              //引入url网址模块
+              let  url = require ('url');
+              //引入实用工具
+              let util = require ('util');
+              //引入系统文件模块
+              let fs = require ('fs');
+              let  server = http.createServer((req,res)=>{
+               let pathname=url.parse(req.url).pathname;
+               console.log(pathname.substring(1));
+               fs.readFile(pathname.substring(1),function(err,data){
+                 if(err){
+                   res.writeHead(404,{
+                     'Context-Type':'text/html'
+                   });
+                 }else{
+                   res.writeHead(200,{
+                     'Context-Type':'text/html'
+                   })
+                   res.write(data.toString());
+                 }
+                 res.end();
+               })
+              })
+              server.listen(3000,'127.0.0.1',()=>{
+                console.log("服务器已经运行,请打开浏览器,输入http://127.0.0.1:3000 访问" );
+              })
+          5.利用node.js访问第三方接口,此时node.js相当于客户端,第三方接口相当于服务端,
+              client.js:
+                //注意https开头的网址要引入https,http开头的网址要引入http,
+                let http = require('https');
+                let util = require('util');
+                http.get('https://www.imooc.com/u/loading',function(res){
+                  let data='';
+                  res.on("data",function(chunk){
+                    data+=chunk;
+                  });
+                  res.on("end",function(){
+                    let result = JSON.parse(data);
+                    console.log("result:"+util.inspect(result));
+                  })
+                })
+          6.express基于 Node.js 平台，快速、开放、极简的 web 开发框架
+          搭建基于express框架的运行环境:(后端内容)
+             1.首先需要全局安装express,这样才能在命令行中使用express
+             2.express的安装:
+                必须要以管理员身份运行cmd后cnpm install -g express-generator才可安装成功,否则会报错
+             3.安装完后使用express --version可以查看是否安装成功,会显示版本号
+             4.这个时候我们就要起一个express服务了,运行:
+                express server
+                会出现一个server文件夹,里面包含我们需要的很多文件
+                bin/www: 启动express服务是需要运行  node bin/www
+                public:里面存放各种公共资源
+                routes:里面存放路由的配置
+                views:存放index,error.layout页面,默认是jade格式的,但是jade已更名为pug,这里我们自己更改为html文件
+                          更改的方法是:
+                            1.首先安装ejs插件,cnpm install ejs --save
+                            2.在app.js中
+                                var ejs= require('ejs');
+                                app.engine('.html',ejs.__express);
+                                app.set('view engine', 'html');//注释掉app.set('view engine', 'jade');
+                             3.在views中新建一个html文件,
+                             4.运行node bin/www后在浏览器打开地址即可看到html文件中的内容
+                 app.js:文件入口
+                 package.json:可以和前端的package.json内容合并
+
+  第八章:MongoDB介绍:
+      1.什么是MongoDB:(NoSQL非关系型数据库)
+          MongoDB 是一个基于分布式文件存储的数据库。由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。
+          MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。
+      2.什么是NoSQL?
+          NoSQL，指的是非关系型的数据库。NoSQL有时也称作Not Only SQL的缩写，是对不同于传统的关系型数据库的数据库管理系统的统称。
+          NoSQL用于超大规模数据的存储。（例如谷歌或Facebook每天为他们的用户收集万亿比特的数据）。这些类型的数据存储不需要固定的模式，无需多余操作就可以横向扩展。
+          谁在使用NOSQL:Google,Facebook,Mozilla,Adobe,Foursquare
+       3.windows下的mongodb安装:(http://www.imooc.com/article/18438)
+            1.下载安装包:
+                在https://pan.baidu.com/s/1mhPejwO百度网盘中下载mongodb安装包和相关软件
+            2.安装安装包到本地电脑:
+                下载到本地,点击适合自己电脑系统的双击安装,在C:\Program Files\MongoDB\的位置，到此只是安装了MongoDB ,我们还需要进行一系列的配置。
+            3.配置MongoDB:
+                1.在c:\MongoDB（可随意起）下面建一个data文件夹 c:\MongoDB\data(存数据)
+                2.在c:\MongoDB（可随意起）下面建一个logs文件夹 c:\MongoDB\logs ，在里面建一个文件mongodb.log(存日志)
+                3.在c:\MongoDB（可随意起）下面建一个etc(随意起，放配置文件)文件夹 c:\MongoDB\etc ,在里面建一个文件mongo.conf(存配置)
+                4.打开mongo.conf文件，修改如下：
+                  #数据库路径
+                  dbpath=c:\MongoDB\data\
+                  #日志输出文件路径
+                  logpath=c:\MongoDB\logs\mongodb.log
+                  #错误日志采用追加模式，配置这个选项后mongodb的日志会追加到现有的日志文件，而不是从新创建一个新文件
+                  logappend=true
+                  #启用日志文件，默认启用
+                  journal=true
+                  #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false
+                  quiet=false
+                  #端口号 默认为27017
+                  port=27017
+                  #指定存储引擎（默认先不加此引擎，如果报错了，大家在加进去）
+                  storageEngine=mmapv1
+                 完成以上操作后，我们就可以启动我们的mongo数据库了
+                 5.启动mongo数据库:
+                    以管理员身份运行cmd,进入到安装mongodb的bin目录下运行:
+                    mongod --dbpath c:\MongoDB\data
+                    这时,当我们看到waiting for connections on port 27017说明启动成功,就可以在浏览器输入localhost:27017访问了
+                 6,配置环境变量:
+                     点击我的电脑>属性>高级系统管理>环境变量>系统变量>path添加 bin的完整目录
+                 7.这时mongo数据可已经启动了,如果想要操作数据库,需要再起一个cmd命令输入mongo就可以对数据库进行操作
+                 8.如果我们不想每次都在命令行启动mongodb,我们可以把它配置到管理的服务中去,这样可以手动启动或者关闭mongodb
+                    1.进入到mongodb的安装目录 下面的bin目录中：
+                    2.输入命令，启动mongo
+                        mongod --config c:\MongoDB\etc\mongo.conf --install --serviceName "MongoDB"
+                        这是就可以在管理>服务中看到多了一个mongodb
+                    3.如果不想在服务中启动mongodb可以删除:
+                        删除服务命令：mongod --config c:\MongoDB\etc\mongo.conf --remove
+                        然后在服务里面刷新一下，就会发现已经删掉了
+                    备注:如果在首次启动mongodb时发现报错:
+                        windows不能再本机启动mongodb服务错误代码 100
+                        找到data文件夹db下面的mongod.lock文件，并删除掉。
+                        找到data文件夹db下面的storage.bson文件，并删除掉。
+                        再次启动即可
+             4.导入json数据到mongodb:
+                 1.直接用命令行建一个数据库(database),插入数据
+                    use demo1
+                    db.goods.insert({"production":"10001","productName":"aaa","salePrice":249,"productImage":"1.jpg"})
+                  2.用mongoVue可视化工具,导入json文件,这种最快,适合导入大量数据
+                      进入mongoVue中打开要导入的数据库,集合,上方菜单栏(collection),点击insert/import document,选择导入json文件还是json串, insert 后刷新即可
+                  3.使用命令行导入json文件:
+                       mongoimport -d demo1 -c goods --file c:/soft/vuejs/vue2.0+node.js+mongodb/project/z1b8jp/mock/goods.json
+                      //mongoimport -d demo1(数据库名称) -c goods(集合名称) --file c:/soft/vuejs/vue2.0+node.js+mongodb/project/z1b8jp/mock/goods.json(文件地址)
+                      备注:命令行导入json文件的时候一定要退出mongo操作台,这样退出mongo环境才能成功
+              5.mongodb常用操作:
+                    1.创建数据库:
+                          use demo(数据库名)
+                          创建完之后必须要插入数据,否则不会添加进去所以需要继续
+                          db.goods(集合名).insert({id:"101"})
+                          这样才能创建数据库成功
+                    2.查看数据库:
+                          show dbs
+                    3.删除数据库:
+                          进入要删除的数据库:use 数据库名
+                          db.dropDatabase()
+                    4.创建集合:
+                        1.db.createCollection('user')//这种创建的是空集合
+                        2.db.user.insert({id:"101"})//这种属于插入数据的同事创建了集合
+                    5.查看集合:
+                        show collections
+                    6.删除集合:
+                        db.user.drop()//user集合名
+                        删除成功会返回true,失败返回false
+                    7.插入文档:
+                          db.user.insert({id:"101"})//user集合名
+                    8.查看文档:
+                          db.collection.find(query, projection)
+                              query ：可选，使用查询操作符指定查询条件
+                              projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
+                          pretty() 方法以格式化的方式来显示所有文档。
+                          db.user.find({"likes":{$lte:50}}).pretty()//小于或等于50的数据
+
+                          db.user.find()//查看所有user表的数据
+                          db.user,findOne()//它只返回一个文档。
+                    9.更新文档:
+                        db.user.update({id:"101"},{$set:{id:"110"}})//会把id为101改成id110
+                    10.删除文档:
+                        参数说明:
+                            query :（可选）删除的文档的条件。
+                            justOne : （可选）如果设为 true 或 1，则只删除一个文档。
+                            writeConcern :（可选）抛出异常的级别
+                        db.user.remove({title:"hello"})//删除集合中title为hello的数据
+                        db.goods.remove({title:"hello",},{justOne:1})//（可选）如果设为 true 或 1，则只删除一个文档。
+   第九章:基于Node.js开发商品列表接口
+         1.node.js启动调试方式:
+               1.通过node命令启动:
+                    进入 server目录 node bin/www
+               2.编译器(webstorm,idea)配置启动入口
+                    使用idea配置启动入口,首先点击Edit Configurations,点击+选中node.js,修改name为项目名.JavaScript File要选中server/bin/www,然后apply,ok,在idea中点击run就可以启动
+               3.pm2:(可以用来启动express的插件)
+                      1.npm install pm2 -g
+                      2.在server文件夹下pm2 start  bin/www
+         2.基于express开发商品列表查询接口
+                mongoose基础用法:https://www.cnblogs.com/xiaohuochai/p/7215067.html?utm_source=itdadao&utm_medium=referral
+                1.安装mongoose:
+                    1.mongoose介绍:
+                            mongoose是mongoDB的一个对象模型工具，是基于node-mongodb-native开发的mongoDB的nodejs驱动，可以在异步的环境下执行。
+                            同时它也是针对mongoDB操作的一个对象模型库，封装了mongoDB对文档的一些增删改查等常用方法，让nodejs操作mongoDB数据库变得更加容易
+                    2.主要功能:
+                      作为MongoDB驱动，可以连接MongoDB数据库;
+                      作为MongoDB的对象模型库，可以直接操作MongoDB文档;
+                    3.安装:
+                        cnpm/npm install mongoose --save
+                2.创建model:
+                     新建一个models的文件夹,建一个goods.js存放模型
+                     goods.js:
+                        //引入mongoose插件
+                        var mongoose  = require('mongoose');
+                        //schema:
+                        //Schema主要用于定义MongoDB中集合Collection里文档document的结构
+                        var Schema = mongoose.Schema;
+                        var productSchema = new Schema({
+                              "productId":String,
+                              "productName":String,
+                              "salePrice":Number,
+                              "productImage":String
+                        });
+                        //导出模型(productSchema)到Good中
+                        //model:
+                        //模型Model是根据Schema编译出的构造器，或者称为类，通过Model可以实例化出文档对象document文档,document的创建和检索都需要通过模型Model来处理
+                        //mongoose.model()
+                        //使用model()方法，将Schema编译为Model。model()方法的第一个参数是模型名称
+                        //Mongoose会将集合名称设置为模型名称的小写版。如果名称的最后一个字符是字母，则会变成复数；如果名称的最后一个字符是数字，则不变；如果模型名称为"MyModel"，则集合名称为"mymodels"；如果模型名称为"Model1"，则集合名称为"model1"
+                        module.exports=mongoose.model('Good',productSchema);
+                3.创建路由:
+                      app.js:
+                          //新建一个goods路由,在routers文件夹下建一个goods.js文件
+                        var goodsRouter = require('./routes/goods');
+                        app.use('/goods', goodsRouter);
+                       routes/goods.js:
+                                var mongoose = require('mongoose');
+                                //导入模型(js文件)
+                                var Goods = require('../models/goods.js');
+                                //连接mongoose数据库
+                                mongoose.connect('mongodb://127.0.0.1:27017/dumall');
+                                //连接成功
+                                mongoose.connection.on("connected",function(){
+                                  console.log('Mongodb connected sucess');
+                                });
+                                //连接失败
+                                mongoose.connection.on("error",function(){
+                                  console.log('Mongodb connected fail');
+                                });
+                                //连接断开
+                                mongoose.connection.on("disconnected",function(){
+                                  console.log('Mongodb connected disconnected');
+                                });
+                                router.get("/list",function(req,res,next){
+                                  // res.send('hello goods list');这个时候运行node bin/www就可以访问到hello goods list
+                                  Goods.find({},function(err,doc){
+                                    if(err){
+                                      res.json({
+                                        status:1,
+                                        msg:err.message
+                                      })
+                                    }else{
+                                      res.json({
+                                        status:0,
+                                        msg:'',
+                                        result:{
+                                          count:doc.length,
+                                          list:doc
+                                        }
+                                      })
+                                    }
+                                  })
+                                })
+                                module.exports=router;
+                      4.完成以上三步操作后就可以在server路径下启动node  bin/www,在浏览器访问localhost:3000/goods就可以拿到mongodb中dumall数据库中的所有内容,
+                          这个时候我们就不需要在mock数据了,在页面中就可以直接调用接口的数据!把webpack.dev.conf.js中的mock数据的代码注释掉,由于服务器拿到的数据在
+                          localhost:3000/goods中,而我们项目运行在localhost:8080,要想获取接口数据要解决跨域问题,在config/index.js下:
+                            proxyTable: {
+                                  '/goods':{
+                                    target:"http://localhost:3000"
+                                  }
+                                },
+                          即可解决跨域问题了,这个时候GoodsList.vue中axios.get的数据就是mongodb中返回的数据了,页面中的内容也是从数据库中获取的
+          3.商品列表分页和排序功能实现:
+                 1.商品列表分页:
+                      在routes/goods.js中修改:
+                        (根据前端返回的page,pageSize,sort进行分页,排序,这个时候我们前端页面还没有定义这些变量,可以在url中访问http://localhost:3000/goods/?page=1&pageSize=8&sort=-1
+                        进行试验,试验的结果是商品降序排列)
+                        router.get("/list",function(req,res,next){
+                          //设置第几页
+                          let page = parseInt(req.query.page);
+                          //设置一页有几条数据
+                          let pageSize = parseInt(req.query.pageSize);
+                          //设置是升序还是降序,1升序,-1降序
+                          let sort = req.query.sortFlag;
+                          //设置跳过多少条数据
+                          let skip = (page-1)*pageSize;
+                          let params={};
+                          let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
+                          goodsModel.sort({'salePrice':sort});
+                          console.log(req.query.page);
+                          console.log(req.params);
+                          // res.send('hello goods list');这个时候运行node bin/www就可以访问到hello goods list
+                          goodsModel.exec(function(err,doc){
+                            if(err){
+                              res.json({
+                                status:1,
+                                msg:err.message
+                              })
+                            }else{
+                              res.json({
+                                status:0,
+                                msg:'',
+                                result:{
+                                  count:doc.length,
+                                  list:doc
+                                }
+                              })
+                            }
+                          })
+                        })
+                 2.商品列表分页和排序进行前后端交互:
+                      商品分页时需要用到vue-infinite-scroll 插件来滚动加载下一页数据,可以到https://www.npmjs.com/package/vue-infinite-scroll查看用法
+                      安装vue-infinite-scroll:cnpm install vue-infinite-scroll --save ,
+                      在router/index.js中:
+                                    //引入滚动刷新加载内容插件
+                                       import infiniteScroll from 'vue-infinite-scroll';
+                                       Vue.use(infiniteScroll);
+                       然后在需要的页面中使用
+                      在goodsList.vue中:
+                      1.//data()中添加:
+                         data(){
+                          return{
+                                //排序参数
+                                sortFlag:true,
+                                //分页
+                                page:1,
+                                 //页面内容个数
+                                pageSize:8,
+                                 //vue-infinite-scroll 插件中(infinite-scroll-disabled="busy")滚动是否开启,true不开启,false开启
+                                 busy:true,
+                          }
+                         }
+                         2.//在methods中getGoodsList修改,添加loadMore
+                          methods:{
+                              getGoodsList(flag){
+                                      let param={
+                                          page:this.page,
+                                          pageSize:this.pageSize,
+                                          sortFlag:this.sortFlag?1:-1
+                                        };
+                                      axios.get('/goods/list',{
+                                        params:param
+                                      }).then((result)=>{
+                                        let  res=result.data;
+                                        if(res.status=="0"){
+                                          if(flag){//falg为ture时,说明开始滚动加载了
+                                            //把刚开始页面加载的this.goodsList拼接上新的返回的数据
+                                            this.goodsList=this.goodsList.concat(res.result.list);
+                                            if(res.result.count<this.pageSize){
+                                              this.busy=true;
+                                            }else{
+                                              this.busy=false;
+                                            }
+                                          }else{
+                                            this.goodsList=res.result.list;
+                                            //这个必须要设置this.busy=false,因为初始设置时this.busy=true是为了防止页面刚加载时滚动触发加载第二页,
+                                            // 所以在第一次调用getGoodsList()之后要设置为false开启滚动
+                                            this.busy=false;
+                                          }
+                                        }else{
+                                          this.goodsList=[];
+                                        }
+
+                                      })
+                                    },
+                                    //滚动加载方法
+                                    loadMore: function() {
+                                      this.busy = true;
+                                      setTimeout(() => {
+                                        this.page++;
+                                        this.getGoodsList(true);
+                                        //利用传值判断不同时期调用该函数
+                                      }, 500);
+                                    },
+                       }
+                 3.价格过滤功能实现:
+                      实现思路:把价格的相关参数通过params对象传递到后端goods.js中,在goods.js中根据传递的值,设置对应价格区间,
+                      进行数据查找即可:
+                      后端操作:
+                          在routes/goods.js中添加价格过滤代码:
+                            .......
+                            let priceLevel =req.query.priceLevel;
+                            //定义价格大于,小于区间变量
+                            let priceGt =''; let priceLt = '';
+                            let params={};
+                            //判断前端传的值
+                            if(priceLevel != "all"){
+                              switch(priceLevel){
+                                case '0': priceGt=0; priceLt=100;break;
+                                case '1': priceGt=101; priceLt=500;break;
+                                case '2': priceGt=501; priceLt=1000;break;
+                                case '3': priceGt=1001; priceLt=5000;break;
+                              }
+                              params={
+                                salePrice:{
+                                  $gte:priceGt,
+                                  $lte:priceLt
+                                }
+                              }
+                            }else{
+                              params={};
+                            }
+                            //mongodb条件操作符，"$lt", "$lte", "$gt", "$gte", "$ne"就是全部的比较操作符，对应于"<", "<=", ">", ">=","!="
+                            let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
+                            goodsModel.sort({'salePrice':sort});
+                            .......
+                          前端操作:
+                              点击价格区间调用接口,返回数据到前端页面:
+                                  //点击all
+                                     priceAll(){
+                                          this.priceChecked='all';
+                                          this.page=1;
+                                          this.getGoodsList();
+                                        },
+                                    //点击其他价格区间
+                                    setPriceFliter(index){
+                                          this.priceChecked=index;
+                                          this.filterBy=false;
+                                          this.overLayFlag=false;
+                                          //点击价格区间调用接口查询数据
+                                          this.page=1;
+                                          this.getGoodsList();
+                                        },
+                                loading图修改层svg图片的形式:
+                                    可以自己在github中搜索loading查找自己喜欢的loading图,下载后在div中插入loding图片并进行恰当时刻的显示隐藏即可
+                 4.加入购物车功能实现:
+                      因为加入购物车的数据是要提交到后台的,为了安全我们用post方式来提交,设置购物车是goods下的子路由addCart,
+
+                      后端代码:
+                          1.首先也是要先设置user模型,在模型中定义用户信息字段:
+                                models/user.js:
+                                  //创建一个用户的模型
+                                  var mongoose = require('mongoose');
+                                  var Schema = mongoose.Schema;
+                                  var userSchema = new Schema({
+                                      "userId":String,
+                                      "userName":String,
+                                      "userPwd":String,
+                                      "orderList":Array,
+                                      "cartList":[
+                                          {
+                                          "productId":String,
+                                          "productName":String,
+                                          "salePrice":String,
+                                          "productImage":String,
+                                          "checked":String,
+                                          "productNum":String
+                                        }
+                                      ],
+                                      "addressList":Array
+                                  });
+                                  module.exports=mongoose.model("user",userSchema);
+                          2.在routes/goods.js中写子路由addCart的代码:实现添加到购物车的功能
+                                    ........
+                                    ......
+                                  //加入购物车(提交数据post安全)
+                                  router.post("/addCart",function(req,res,next){
+                                    //假设已经登录,根据用户id查询数据
+                                      let userId='100000077';
+                                      //获取商品id,post请求获取的方法是req.body,这时不能把前端上的所有商品数据传过来保存,这样是不科学和危险的,
+                                    // 我们应该根据商品id去数据库中拿到数据,修改数据库中的数据
+                                      let productId = req.body.productId;
+                                      //导入模型
+                                      let User = require('../models/user.js');
+                                      //在用户表中查找userId=userId(100000077)的用户,第一个userId是模型中定义的,和数据库中的名称相同,第二个userId是用户id
+                                      User.findOne({userId:userId},function(err,userDoc){
+                                          if(err){
+                                              res.json({
+                                                status:"1",
+                                                msg:err.message
+                                              })
+                                          }else{
+                                              console.log(`userDoc:${userDoc}`);
+                                              //确认用户id存在后查找商品是否存在
+                                              if(userDoc){
+                                                //判断购物车中商品是否已经存在,如果存在则商品数量++,不存在保存商品所以信息
+                                                let goodsItem = '';
+                                                userDoc.cartList.forEach(function(item){
+                                                  if(item.productId ==productId){
+                                                    goodsItem = item;
+                                                    item.productNum++;
+                                                  }
+                                                });
+                                                if(goodsItem){
+                                                  userDoc.save(function(err2,doc2){
+                                                    if(err2){
+                                                      res.json({
+                                                        status:"1",
+                                                        msg:err2.message
+                                                      })
+                                                    }else{
+                                                      res.json({
+                                                        status:'0',
+                                                        msg:'',
+                                                        result:'success'
+                                                      })
+                                                    }
+                                                  });
+                                                }else{
+                                                  Goods.findOne({productId:productId},function(err1,doc1){
+                                                    if(err1){
+                                                      res.json({
+                                                        status:"1",
+                                                        msg:err1.message
+                                                      })
+                                                    }else{
+                                                      //确认商品存在后,由于,数据库中的字段没有productNum(数量)和checked(是否被选中),所以我们要加进去保存
+                                                      if(doc1){
+                                                        doc1.productNum=1;
+                                                        doc1.checked=1;//1选中,0 未选中
+                                                        //把商品中的数据和新加的数据加到User.carList中并保存
+                                                        userDoc.cartList.push(doc1);
+                                                        userDoc.save(function(err2,doc2){
+                                                          if(err2){
+                                                            res.json({
+                                                              status:"1",
+                                                              msg:err2.message
+                                                            })
+                                                          }else{
+                                                            res.json({
+                                                              status:'0',
+                                                              msg:'',
+                                                              result:'success'
+                                                            })
+                                                          }
+                                                        });
+                                                      }
+                                                    }
+                                                  })
+                                                }
+                                              }
+                                          }
+                                      })
+                                  });
+                      前端代码:
+                            在goodsList.vue中点击购物车,发送一个携带商品id的post请求,
+                              //添加进购物车
+                                        addCart(productId){
+                                          axios.post('/goods/addCart',{
+                                            productId:productId
+                                          }).then((res)=>{
+                                            console.log(res);
+                                            if(res.data.status==0){
+                                              alert("加入购物车成功")
+                                            }else{
+                                              alert(`msg:${res.data.msg}`);
+                                            }
+                                          })
+                                  }
+
+   第十章:登录模块实现
+          1.登录功能实现:
+              登录功能属于users/login页面,所以我们需要在routes/users.js中书写后端登录逻辑
+              后端代码:
+                  routes/users.js:
+                      router.post('/login',function(req,res,next){
+                        var param ={
+                          userName:req.body.userName,
+                          userPwd:req.body.userPwd
+                        };
+                        console.log(param);
+                        //根据账号密码查询数据库
+                        User.findOne(param,function(err,doc){
+                          if(err){
+                            //没用符合查询条件的时候报错
+                            res.json({
+                              status:"1",
+                              msg:err.message
+                            });
+                          }else{
+                            if(doc){
+                              //保存到cookie,app.js中已经有引入 cookie-Parser了(做cookie处理)
+                              //path:保存到根路径,maxAge:存储的周期时长
+                              res.cookie("userId",doc.userId,{
+                                path:'/',
+                                maxAge:1000*60*60
+                              });
+                               res.cookie("userName",doc.userName,{
+                                   path:'/',
+                                    maxAge:1000*60*60
+                               });
+                              res.json({
+                                status:"0",
+                                msg:"",
+                                result:{
+                                  userName:doc.userName
+                                }
+                              })
+                            }else{
+                              //查询到用户名或者密码错误时执行
+                              res.json({
+                                status:"1",
+                                msg:"用户名或者密码错误"
+                              });
+                            }
+                          }
+                        })
+                      })
+                   前端代码:
+                      login(){
+                            if(!this.userName  || !this.userPwd){
+                              this.errorTip=true;
+                              return;
+                            }
+                            axios.post("/users/login",{
+                              userName:this.userName,
+                              userPwd:this.userPwd
+                            }).then((response)=>{
+                              let res =response.data;
+                              if(res.status=="0"){
+                                this.errorTip=false;
+                                this.loginModalFlag=false;
+                                this.nickName=res.result.userName;
+                              }else{
+                                this.errorTip=true;
+                              }
+                            })
+                          }
+                          备注:记得在config/index.js文件中配置跨域请求:
+                                  proxyTable: {
+                                        '/goods':{
+                                          target:"http://localhost:3000"
+                                        },
+                                        '/goods/*':{
+                                          target:"http://localhost:3000"
+                                        },
+                                        '/users':{
+                                          target:"http://localhost:3000"
+                                        },
+                                        '/users/*':{
+                                          target:"http://localhost:3000"
+                                        }
+                                      },
+           2.登出功能的实现:
+                  后端代码:
+                      routes/users.js:
+                          //登出路由(通过清除cookie的userid退出登录)
+                          router.post('/logout',function(req,res,next){
+                            res.cookie('userId','',{
+                              path:'/',
+                              maxAge:-1
+                            });
+                            res.json({
+                              status:"0",
+                              msg:"",
+                              result:''
+                            })
+                          })
+                  前端代码:
+                  //点击登出:
+                      logout(){
+                        // this.loginModalFlag=true
+                        axios.post('/users/logout').then((response)=>{
+                          let res= response.data;
+                          if(res.status=='0'){
+                            this.nickName='';
+                          }else{
+
+                          }
+                        })
+                      }
+           3.登录拦截:
+                1.登录拦截写在后端的server/app.js中:
+                       .......
+                      app.use(express.static(path.join(__dirname, 'public')));
+
+                      //制作一个登录拦截器,当用户登录的时候可以加入购物车,否则提示请登录后再加入(app.use直接加函数会优先执行,这个函数位置不可以写太靠前,否则会没效果)
+                      app.use(function(req,res,next){
+                        if(req.cookies.userId){
+                          next();
+                        }else{
+                          console.log(`${req.path} ~~~~${req.originalUrl}`);
+                          //req.path:goods/list     req.originalUrl:goods/list?page=1&pageSize=8&sortFlag=1&priceLevel=all
+                          //在这里可以用req.path=="/goods/list" 或者 req.originalUrl.indexOf('/goods/list')>-1
+                          //满足下列条件的地址可以继续执行
+                          if(req.originalUrl =='/users/login'||req.originalUrl=='users/logout'||req.path=="/goods/list"){
+                            next();
+                          }else{
+                            res.json({
+                              status:'10001',
+                              msg:"当前未登录",
+                              result:''
+                            })
+                          }
+                        }
+                      });
+
+                      app.use('/', indexRouter);
+                      ......
+                 2.这时候我们已经可以拦截到数据了,但是当登录后我们刷新页面又要重新登录,所以写一个路由当页面加载时从缓存判断是否登录
+                  后端代码:
+                      routes/users.js:
+                          //页面刷新判断是否登录,如果登录则保持登录
+                          router.get("/checkLogin",function(req,res,next){
+                            if(req.cookies.userId){
+                              res.json({
+                                status:'0',
+                                msg:'',
+                                result:req.cookies.userName
+                              })
+                            }else{
+                                res.json({
+                                  status:'1',
+                                  msg:'未登录',
+                                  result:''
+                                })
+                            }
+                          })
+                    前端代码:
+                        mounted(){
+                            this.checkLogin();
+                          },
+                          methods:{
+                            //刷新是否登录
+                                checkLogin(){
+                                  axios.get('users/checkLogin').then((response)=>{
+                                    let res=response.data;
+                                    if(res.status=='0'){
+                                      this.nickName=res.result;
+                                    }else{
+                                    }
+                                  })
+                                },
+                          }
+                     备注:主要实现的是在未登录的情况下没办法加入商品到购物车,只有登录后才可加入,当登录后刷新页面还是登录状态
+
+          4.全局模态框组件实现:
+                实现思路:新建一个modal.vue模块来实现模态框代码,在子组件中,使用slot插槽来实现模态框的复用,使用props接收父组件的数据,使用
+                    $emit()来像父组件传递数据,在父组件中 利用插槽插入数据,接收子组件传入的数据,操作数据传递给子组件
+                     父组件代码(goodList.vue):
+                              <modal v-bind:mdShow="mdShowCart" v-on:close="closeModal">
+                                  <p slot="message">
+                                    <svg class="icon-status-ok">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+                                    </svg>
+                                    <span>加入购物车成功!</span>
+                                  </p>
+                                  <div slot="btnGroup">
+                                    <a class="btn btn-m" @click="mdShowCart=false" href="javascript:;">继续购物 </a>
+                                    <router-link  to="/cart" class="btn btn-m" >查看购物车</router-link>
+                                  </div>
+                                </modal>
+
+                     子组件代码(modal.vue):
+                        <template>
+                            <div>
+                              <div class="md-modal modal-msg md-modal-transition " :class="{'md-show':mdShow}">
+                                <div class="md-modal-inner">
+                                  <div class="md-top">
+                                    <div class="md-title">Login in</div>
+                                    <button class="md-close" @click="closeModal">Close</button>
+                                  </div>
+                                  <div class="md-content">
+                                    <div class="confirm-tips">
+                                      <slot name="message"></slot>
+                                    </div>
+                                    <div class="btn-wrap">
+                                      <slot name="btnGroup"></slot>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="md-overlay" v-show="mdShow" @click="closeModal"></div>
+                            </div>
+                        </template>
+                        <script type="text/ecmascript-6">
+                         export default{
+                            props:["mdShow"],
+                             data(){
+                                return{
+
+                                }
+                             },
+                           methods:{
+                             closeModal(){
+                               this.$emit('close');
+                             }
+                           },
+                         }
+                        </script>
+                        <style rel="stylesheet/less" lang="less" scoped>
+                        </style>
+  第十一章:
+        1.购物车模块实现:
+            实现思路:新建一个cart.vue购物车页面,当用户访问购物车页面的时候在mounted钩子函数中利用axios调用购物车接口,获取购物车中的数据:
+            然后渲染到前端页面中:
+              后端代码routes/users.js:
+                  //查询当前用户的购物车数据
+                  router.get('/cartList',function(req,res,next){
+                     let userId=req.cookies.userId;
+                     User.findOne({userId:userId},function(err,doc){
+                       if(err){
+                         res.json({
+                           status:"1",
+                           msg:err.message,
+                           result:''
+                         });
+                       }else{
+                         if(doc){
+                           res.json({
+                             status:'0',
+                             msg:'',
+                             result:doc.cartList
+                           })
+                         }
+                       }
+                     })
+                  })
+              前端代码:
+                  cart.vue:
+                        mounted(){
+                          this.init();
+                        },
+                        methods:{
+                            init(){
+                              axios.get('/users/cartList').then((response)=>{
+                                let res= response.data;
+                                this.cartList=res.result;
+                                if(res.status=='0'){
+                                  console.log(this.cartList);
+                                }
+                              })
+                            }
+                          }
+                      然后把获取的数据渲染到页面中
+        2.购物车删除功能实现:
+            实现思路:前端页面点击删除的时候,传递商品 productId,到后端代码中,在后端代码里从缓存中拿登录用户的userId,通过mongoose的删除更新方法
+            搜索用户的商品id并删除掉,然后重新再前端获取/users/cartList接口数据渲染到页面
+            后端代码routes/users.js:
+                //购物车删除
+                router.post('/cartDel',function(req,res,next){
+                  let productId=req.body.productId;
+                  let userId=req.cookies.userId;
+                  User.update({userId:userId},{$pull:{'cartList':{'productId':productId}}},function(err,doc){
+                    if(err){
+                      res.json({
+                        status:'1',
+                        msg:err.message,
+                        result:''
+                      })
+                    }else{
+                      res.json({
+                        status:'0',
+                        msg:'',
+                        result:'suc'
+                      })
+                    }
+                  })
+                })
+             前端代码cart.vue:
+                      closeModal(){
+                        this.modalConfirm=false;
+                      },
+                      delCartConfirm(item){
+                        this.delItem=item;
+                        this.modalConfirm=true;
+                      },
+                      delCart(){
+                        axios.post('users/cartDel',{
+                          productId:this.delItem.productId
+                        }).then((response)=>{
+                          let res=response.data;
+                          if(res.status=='0'){
+                            this.modalConfirm=false;
+                            this.init();
+                          }else{
+
+                          }
+                        })
+                      }
+        3.商品修改功能:
+            实现思路:点击前端页面,如增加,减少,选中商品时,把商品的id,是否选中商品数量通过post方式提交到后端,后端根据用户id,商品名称,
+            进行商品数量和是否选中进行更改:
+            后端代码routes/users.js:
+                //商品数量加减
+                router.post('/cartEdit',function(req,res,next){
+                  let userId=req.cookies.userId,productId=req.body.productId,
+                    productNum=req.body.productNum,checked=req.body.checked;
+                  console.log(checked);
+                  User.update(
+                      {"userId":userId,"cartList.productId":productId},
+                      {"cartList.$.productNum":productNum,"cartList.$.checked":checked},
+                    function(err,doc){
+                      if(err){
+                        res.json({
+                          status:'1',
+                          msg:err.message,
+                          result:''
+                        })
+                      }else{
+                        res.json({
+                          status:'0',
+                          msg:'',
+                          result:'suc'
+                        })
+                      }
+                    })
+                })
+             前端代码cart.vue:
+                //商品是否选中按钮
+                 <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'checked':item.checked=='1'}"  @click="editCart('checked',item)">
+                      svg class="icon icon-ok">
+                       <use xlink:href="#icon-ok"></use>
+                        </svg>
+                 </a>
+
+                  editCart(flag,item){
+                        // item传入当前商品信息
+                        if(flag=="add"){
+                          item.productNum++;
+
+                        }else if(flag=='minu'){
+                          if(item.productNum<=1){
+                            return;
+                          }
+                          item.productNum--;
+                        }else{
+                          //如果item.checked=1则取0,否则取1(取反)
+                          item.checked=item.checked=='1' ? '0':'1';
+                        }
+                        axios.post('/users/cartEdit',{
+                            productNum:item.productNum,
+                            productId:item.productId,
+                            checked:item.checked
+                        }).then((response)=>{
+                          let res=response.data;
+                          if(res.status=='0'){
+                            console.log('修改成功')
+                          }else{
+                            console.log('修改失败')
+                          }
+                        })
+                      },
+        4.购物车全选和商品实时计算功能实现:
+                1.购物车全选功能和总金额计算:
+                      实现思路:全选功能相关的实现先通过点击全选按钮传递一个boolean值,遍历购物车中的checked属性,把checked属性更改为跟随全选按钮变化,
+                      通过post传递checked值到后端代码,然后把购物车每个商品的checked值存到数据库并保存,这样就可以实现在前端操作后端也跟着变化,但是在
+                      全选按钮上还要实现反选等操作,这块通过计算属性用购物车中商品被选中的个数和购物车总商品数进行对比,如果相同,代表所有物品都已经选择,
+                      全选按钮勾选上!总金额根据计算属性把所有商品单价和数量相乘累加起来即可
+                     后端代码routes/users.js:
+                          //商品全选和取消全选
+                          router.post('/editCheckAll',function(req,res,next){
+                            let userId=req.cookies.userId,checked=req.body.checked?"1":"0";
+                            //操作购物车里所有商品的属性
+                            User.findOne({userId:userId},function(err,user){
+                              if(err){
+                                res.json({
+                                  status:'1',
+                                  msg:err.message,
+                                  result:''
+                                })
+                              }else{
+                                if(user){
+                                  user.cartList.forEach((item)=>{
+                                    item.checked=checked;
+                                  });
+                                  user.save(function(err1,doc){
+                                    if(err1){
+                                      res.json({
+                                        status:'1',
+                                        msg:err1.message,
+                                        result:''
+                                      })
+                                    }else{
+                                      res.json({
+                                        status:'0',
+                                        msg:'',
+                                        result:'suc'
+                                      })
+                                    }
+                                  })
+                                }
+                              }
+                            })
+                          })
+                      前端代码cart.vue:
+                       computed:{
+                            checkAllFlag(){
+                              return this.checkedCount==this.cartList.length;
+                            },
+                            checkedCount(){
+                              let i=0;
+                              this.cartList.forEach((item)=>{
+                                if(item.checked=='1'){
+                                  i++;
+                                }
+                              });
+                              return i;
+                            },
+                            //计算总金额
+                            totalPrice(){
+                              let money=0;
+                              this.cartList.forEach((item)=>{
+                                if(item.checked=='1'){
+                                  money+=parseInt(item.productNum)*parseFloat(item.salePrice);
+                                }
+                              })
+                              return money;
+                            }
+                          },
+                      methods中:
+                          toggerCheckAll(){
+                                  //this.checkAllFlag=!this.checkAllFlag
+                                  //计算属性的数据是实时更新的,在全选的按钮中不能 this.checkAllFlag=!this.checkAllFlag,因为当所以物品都选中时,
+                                  //你把全选按钮置为false,这时候它立马根据商品都已经选中又把按钮置为true,所以需要一个中间变量传递下
+                                  let flag=!this.checkAllFlag;
+                                  this.cartList.forEach((item)=>{
+                                    item.checked =flag;
+                                  });
+                                  axios.post('/users/editCheckAll',{
+                                    checked:flag
+                                  }).then((response)=>{
+                                    let res=response.data;
+                                    if(res.status="0"){
+                                      console.log('修改成功')
+                                    }else{
+                                      console.log('修改失败')
+                                    }
+                                  })
+                                }
+                      2.金额过滤器插件(https://github.com/vuejs/vuex/blob/dev/examples/shopping-cart/currency.js)
+                            使用步骤:
+                              1.下载currence.js到项目中,本项目存在src/util/currency.js中
+                                  局部注册:
+                                        2.在cart.vue中引入资源:
+                                       import {currency} from '@/util/currency.js';
+                                        //局部过滤器注册:
+                                            filters:{
+                                              currency:currency,
+                                            },
+                                   全局注册:
+                                        2.在router/index.js中引入资源:
+                                            // import {currency} from '@/util/currency.js';
+                                            // Vue.filter('currency',currency);
+                              3.使用:
+                                  <div class="item-total">
+                                         Item total: <span class="total-price">{{this.totalPrice | currency('$')}}</span>
+                                   </div>
+  第十二章:地址模块实现:
+        1.地址列表渲染实现:
+            实现思路:首先写一个静态address.vue页面,然后设置路由路径,在后端写一个接口获取地址列表,从前端获取数据,渲染到页面中
+            后端代码routes/users.js:
+                //查询用户地址接口
+                router.get('/addressList',function(req,res,next){
+                  let userId=req.cookies.userId;
+                    User.findOne({userId:userId},function(err,doc){
+                      if(err){
+                        res.json({
+                          status:'1',
+                          msg:err.message,
+                          result:''
+                        })
+                      }else{
+                        res.json({
+                          status:'0',
+                          msg:"",
+                          result:doc.addressList
+                        })
+                      }
+                    })
+                })
+             前端代码 address.vue:
+                  data(){
+                        return{
+                          addressList:[],
+                        }
+                      },
+                  mounted(){
+                        this.init();
+                      },
+                      methods:{
+                        init(){
+                          axios.get('/users/addressList').then((response)=>{
+                            let res=response.data;
+                            if(res.status=='0'){
+                                this.addressList=res.result;
+                            }else{
+
+                            }
+                          })
+                        }
+                      }
+        2.地址列表切换和展开功能实现:
+            实现思路:利用计算属性控制临界值数据,当页面显示三个地址时,点击more按钮,把limit改为this.addressList.length,这时候计算属性会
+            立马截取新的数据变量到页面中,当地址全显示时点击more同理
+              computed:{
+                    addressListFilter(){
+                      return this.addressList.slice(0,this.limit);
+                    }
+                  },
+               methods:{
+                  clickMore(){
+                          if(this.limit==3){
+                            this.limit=this.addressList.length;
+                          }else{
+                            this.limit=3;
+                          }
+                        },
+               }
+            3.地址设置默认功能实现:
+                  思想思路:想实现设置默认地址必须要和后端交互了,这个时候由于前面我们的用户模型(models/user.js)中的addressList还没有定义key.value,
+                  所以需要先根据后端接口定义下,然后在routes/users.js中写入设置默认地址接口,最后在前端调用后台接口,渲染页面
+                  models/user.js:
+                      ......
+                           "addressList":[
+                                {
+                                  "addressId":String,
+                                  "userName":String,
+                                  "streetName":String,
+                                  "postCode":Number,
+                                  "tel":Number,
+                                  "isDefault":Boolean
+                                }
+                              ]
+                          ......
+                  routes/users.js:
+                        //设置默认地址
+                        router.post('/setDefault',function(req,res,next){
+                          var userId=req.cookies.userId,addressId=req.body.addressId;
+                          if(!addressId){
+                            res.json({
+                              status:"10003",
+                              msg:"addressId is null",
+                              result:""
+                            })
+                          };
+                          User.findOne({userId:userId},function(err,doc){
+                            if(err){
+                              res.json({
+                                status:"1",
+                                msg:err.message,
+                                result:""
+                              })
+                            }else{
+                              var addressList=doc.addressList;
+                              addressList.forEach((item)=>{
+                                  if(item.addressId==addressId){
+                                    item.isDefault=true;
+                                  }else{
+                                    item.isDefault=false;
+                                  }
+                                })
+                                doc.save(function(err1,doc1){
+                                  if(err1){
+                                    res.json({
+                                      status:"1",
+                                      msg:err.message,
+                                      result:""
+                                    })
+                                  }else{
+                                    res.json({
+                                      status:"0",
+                                      msg:"",
+                                      result:""
+                                    })
+                                  }
+                                })
+                            }
+                          })
+                        })
+                  Address.vue:
+                         setDefault(item){
+                                axios.post('/users/setDefault',{
+                                  addressId:item.addressId
+                                }).then((response)=>{
+                                let res=response.data;
+                                  if(res.status=="0"){
+                                    this.init();
+                                  }
+                                })
+                              },
+             4.地址删除功能:
+                    后端代码:
+                        routes/users.js:
+                              //删除地址接口
+                              router.post("/delAddress",function(req,res,next){
+                                var userId=req.cookies.userId,addressId=req.body.addressId;
+                                User.update({userId:userId},{$pull:{"addressList":{"addressId":addressId}}},function(err,doc){
+                                  if(err){
+                                    res.json({
+                                      status:"1",
+                                      msg:err.message,
+                                      result:''
+                                    })
+                                  }else{
+                                    res.json({
+                                      status:"0",
+                                      msg:'',
+                                      result:''
+                                    })
+                                  }
+                                })
+                              });
+                        前端代码:
+                            Address.vue:
+                              delAddress(){
+                                      axios.post('/users/delAddress',{
+                                        addressId:this.addressId,
+                                      }).then((response)=>{
+                                        let res=response.data;
+                                        if(res.status=="0"){
+                                          this.isMdshow=false;
+                                          this.init();
+                                          console.log("删除成功")
+                                        }
+                                      })
+                                    }
+
+  第十三章:订单确认模块实现:
+        1.订单确认列表渲染功能实现:
+            实现思路:
+              获取购物车列表中选中的商品,把商品渲染到前端页面显示,然后遍历选中商品计算总价格
+              由于之前我们写了一个/users/cartList接口所以这里我们可以直接调用此接口,然后遍历出选中的商品
+              前端代码OrderConfirm.vue:
+                  mounted(){
+                      this.init();
+                    },
+                  methods:{
+                        init(){
+                          axios.get("/users/cartList").then((response)=>{
+                            let res=response.data;
+                            if(res.status=="0"){
+                              this.cartList=res.result;
+                              this.cartList.forEach((item)=>{
+                                if(item.checked=='1'){
+                                 this.subTotal+=item.salePrice*item.productNum;
+                                }
+                              })
+                            }
+                            this.orderTotal=this.subTotal+this.shipping+this.discount+this.tax;
+                          })
+                        }
+                      },
+
+        2.创建订单功能实现:
+            实现思路:提交订单需要保存用户地址,用户的购物信息,生成用户订单和用户订单创建时间,这些都要在后端定义存储,
+            生成订单的时候有个订单号,这里用到了util.js(日期格式化方法插件,前后端都可用),我们把它放在util/util.js中,在后端引用
+            routes/users.js中 require('./../util/util.js');,然后在接口中调用
+            后端代码routes/users.js:
+                    //订单提交接口
+                    router.post("/payMent",function(req,res,next){
+                      var userId=req.cookies.userId,
+                        orderTotal=req.body.orderTotal,
+                        addressId=req.body.addressId;
+                      User.findOne({userId:userId},function(err,doc){
+                        if(err){
+                          res.json({
+                            status:"1",
+                            msg:err.message,
+                            result:''
+                          })
+                        }else{
+                          var address='',goodList=[];
+                          //获取用户地址信息
+                          doc.addressList.forEach((item)=>{
+                            if(item.addressId==addressId){
+                                address=item;
+                            }
+                          });
+                          //获取用户购物车的购买信息
+                          doc.cartList.forEach((item)=>{
+                            if(item.checked=='1'){
+                              goodList.push(item);
+                            }
+                          });
+                          var platform='622';
+                          var r1=Math.floor(Math.random()*10);
+                          var r2=Math.floor(Math.random()*10);
+                          var sysDate=new Date().Format('yyyyMMddhhmmss');
+                          var createDate=new Date().Format('yyyy-MM-dd hh:mm:ss');
+                          var orderId=platform+r1+sysDate+r2;
+                          var order={
+                            orderId:orderId,
+                            orderTotal:orderTotal,
+                            addressInfo:address,
+                            goodsList:goodList,
+                            orderStatus:'1',
+                            createDate:createDate
+                          };
+                          doc.orderList.push(order);
+                          doc.save(function(err1,doc1){
+                            if(err){
+                              res.json({
+                                status:"1",
+                                msg:err.message,
+                                result:''
+                              })
+                            }else{
+                              res.json({
+                                status:"0",
+                                msg:'',
+                                result:''
+                              })
+                            }
+                          });
+                          res.json({
+                            status:"0",
+                            msg:'',
+                            result:{
+                              orderId:order.orderId,
+                              orderTotal:order.orderTotal
+                            }
+                          })
+                        }
+                      })
+                    })
+
+              前端代码orderConfirm.vue:
+                  //点击提交订单按钮
+                  payMent(){
+                          //获取router-link携带的参数
+                          var addressId=this.$route.query.addressId;
+                            axios.post("users/payMent",{
+                              addressId:addressId,
+                              orderTotal:this.orderTotal
+                            }).then((response)=>{
+                              let res=response.data;
+                              if(res.status=="0"){
+                                //提交成功跳转路由
+                               this.$router.push({
+                                 path:'/orderSuccess?orderId='+res.result.orderId
+                               })
+                              }
+                            })
+                        }
+  第十四章:订单成功模块实现:
+        实现思路:新建一个订单页面,输出订单id和总金额,在后端创建一个orderDetail页面获取对应订单列表中的id和总金额显示在前端页面
+        后端代码:routes/users.js:
+            //订单成功页面
+            router.get('/orderDetail',function(req,res,next){
+              var userId=req.cookies.userId,orderId=req.query.orderId;
+              console.log(orderId);
+                User.findOne({userId:userId},function(err,userDoc){
+                  if(err){
+                    res.json({
+                      status:'1',
+                      msg:err.message,
+                      result:''
+                    })
+                  }else{
+                    var orderList=userDoc.orderList;
+                    if(orderList.length>0){
+                      orderList.forEach((item)=>{
+                        if(item.orderId==orderId){
+                          var orderTotal=item.orderTotal;
+                          console.log(orderTotal);
+                          if(orderTotal>0){
+                            res.json({
+                              status:'0',
+                              msg:"",
+                              result:{
+                                orderId:orderId,
+                                orderTotal:orderTotal
+                              }
+                            })
+                          }else{
+                            res.json({
+                              status:'120002',
+                              msg:"此订单无效",
+                              result:""
+                            })
+                          }
+                        }
+                      })
+                    }else{
+                      res.json({
+                        status:'120001',
+                        msg:"当前用户未创建订单",
+                        result:''
+                      })
+                    }
+                  }
+              })
+            })
+        前端页面:OrderSuccess.vue:
+              methods:{
+                    init(){
+                      var orderId=this.$route.query.orderId;
+                      if(!orderId){
+                        return;
+                      }
+                      axios.get('/users/orderDetail',{
+                        params:{
+                          orderId:orderId
+                        }
+                      }).then((response)=>{
+                        let res=response.data;
+                        if(res.status=='0'){
+                          this.orderList=res.result;
+                        }
+                      })
+                    }
+                  },
+  第十五章:基于Vuex改造登录和购物车数量功能
+          1.vuex基本介绍:
+                 1.什么是vuex:
+                      vuex是一个专为Vue.js应用程序开发的状态管理模式.
+                      每个组件中的data中的数据都是状态,当我们组件较多,data中的状态也较多的时候,为了方便管理某些状态,我们可以使用vuex
+                      把状态抽离出来存放到vuex中
+                  2.为什么要用vuex
+                      当我们构建一个中大型的单页面应用程序时,vuex可以更好的帮助我们在组件外部同意管理状态
+                  3.vuex的核心概念:
+                      State:
+                           Stats是唯一的数据源.
+                           单一状态树
+                           stats使用示例:
+                      Getters:(是对状态的延伸,比如过滤)
+                          通过Getters可以派生出一些新的状态,例如对列表进行过滤并计数：
+                      Mutations:(是唯一可以改变store中的状态的方法)
+                            更改 Vuex 的 store 中的状态的唯一方法是提交 mutation
+                            Mutations无法进行异步操作
+                      Actions:
+                            Action 类似于 mutation，不同在于
+                              Action提交的是mutation,而不是直接变更状态
+                              Action可以包含任意异步操作
+                      Modules:
+                            面对复杂的应用程序,当管理的状态比较多时,我们需要将vuex的store对象分割成模块(modules)
+                 4.项目结构:
+                      Vuex 并不限制你的代码结构。但是，它规定了一些需要遵守的规则
+                      应用层级的状态应该集中到单个 store 对象中。
+                      提交 mutation 是更改状态的唯一方法，并且这个过程是同步的。
+                      异步逻辑都应该封装到 action 里面。
+                      只要你遵守以上规则，如何组织代码随你便。如果你的 store 文件太大，只需将 action、mutation 和 getter 分割到单独的文件。
+                      对于大型应用，我们会希望把 Vuex 相关代码分割到模块中。下面是项目结构示例：
+                            ├── index.html
+                            ├── main.js
+                            ├── api
+                            │   └── ... # 抽取出API请求
+                            ├── components
+                            │   ├── App.vue
+                            │   └── ...
+                            └── store
+                                ├── index.js          # 我们组装模块并导出 store 的地方
+                                ├── actions.js        # 根级别的 action
+                                ├── mutations.js      # 根级别的 mutation
+                                └── modules
+                                    ├── cart.js       # 购物车模块
+                                    └── products.js   # 产品模块
+          2.vuex的语法讲解:
+              state示例:
+                      <!doctype html>
+                      <html lang="en">
+                      <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport"
+                              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                        <title>vuex--state</title>
+                        <script src="../../node_modules/vue/dist/vue.min.js"></script>
+                        <script src="../../node_modules/vuex/dist/vuex.min.js"></script>
+                      </head>
+                      <body>
+                        <div id="app">
+                          <counter></counter>
+                        </div>
+                      </body>
+                      <script>
+                        //通过script引入的vuex不需要vue.use()调用,因为在vuex.min.js已经有调用过
+                        //定义组件
+                        const counter={
+                          template:`
+                            <div>{{count}}</div>
+                          `,
+                          computed:{
+                            count(){
+                              return this.$store.state.count;
+                            }
+                          }
+                        };
+                        const store=new Vuex.Store({
+                          state:{
+                            count:15
+                          }
+                        });
+                        new Vue({
+                          el:"#app",
+                          store,
+                          data:{
+                            msg:'vuex的使用'
+                          },
+                          components:{
+                            counter
+                          }
+                        })
+                      </script>
+                      </html>
+              mutations示例:
+                      <!doctype html>
+                      <html lang="en">
+                      <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport"
+                              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                        <title>vuex--mutations</title>
+                        <script src="../../node_modules/vue/dist/vue.min.js"></script>
+                        <script src="../../node_modules/vuex/dist/vuex.min.js"></script>
+                      </head>
+                      <body>
+                      <div id="app">
+                        <a href="javascript:;" @click="add">add</a>
+                        <counter></counter>
+                      </div>
+                      </body>
+                      <script>
+                        //通过script引入的vuex不需要vue.use()调用,因为在vuex.min.js已经有调用过
+                        //定义组件
+                        const counter={
+                          template:`
+                             <div>
+                                <div>state:{{count}}</div>
+                                <div>name:{{this.$store.state.name}}</div>
+                              </div>
+                          `,
+                          computed:{
+                            //可以在子组件计算属性先返回结果,然后把计算属性写在子组件页面中
+                            //也可以在拿到state值后直接写在页面中,但是建议用上一种方法
+                            count(){
+                              return this.$store.state.count;
+                            }
+                          }
+                        };
+                        const store=new Vuex.Store({
+                          state:{
+                            count:15,
+                            name:'lcl',
+                          },
+                          mutations:{
+                            increment(state,n){
+                              state.count+=n;
+                            },
+                            updateName(state,value){
+                              state.name=value;
+                            }
+                          }
+                        });
+                        new Vue({
+                          el:"#app",
+                          store,
+                          data:{
+                            msg:'vuex的使用'
+                          },
+                          methods:{
+                            add(){
+                              this.$store.commit('increment',10);
+                              this.$store.commit('updateName','zxq');
+                            }
+                          },
+                          components:{
+                            counter
+                          }
+                        })
+                      </script>
+                      </html>
+              action和getters示例:
+                      <!doctype html>
+                      <html lang="en">
+                      <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport"
+                              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                        <title>vuex--action</title>
+                        <script src="../../node_modules/vue/dist/vue.min.js"></script>
+                        <script src="../../node_modules/vuex/dist/vuex.min.js"></script>
+                      </head>
+                      <body>
+                      <div id="app">
+                        <a href="javascript:;" @click="add">add</a>
+                        <counter></counter>
+                      </div>
+                      </body>
+                      <script>
+                        //通过script引入的vuex不需要vue.use()调用,因为在vuex.min.js已经有调用过
+                        //定义组件
+                        const counter={
+                          template:`
+                             <div>
+                                <div>state:{{count}}</div>
+                                <div>name:{{this.$store.state.name}}</div>
+                                <div>userName:{{userName}}</div>
+                              </div>
+                          `,
+                          computed:{
+                            //可以在子组件计算属性先返回结果,然后把计算属性写在子组件页面中
+                            //也可以在拿到state值后直接写在页面中,但是建议用上一种方法
+                            count(){
+                              return this.$store.state.count;
+                            },
+                            userName(){
+                              return this.$store.getters.userName;
+                            }
+                          }
+                        };
+                        const store=new Vuex.Store({
+                          state:{
+                            count:15,
+                            name:'lcl',
+                          },
+                          //getters延伸state的状态,无法改变state的状态
+                          getters:{
+                            userName(state){
+                              return state.name+'  hello world';
+                            }
+                          },
+                          mutations:{
+                            increment(state,n){
+                              state.count+=n;
+                            },
+                            updateName(state,value){
+                              state.name=value;
+                            }
+                          },
+                          //actions可有可无,根据是否需要异步操作决定,state和mutations必须要有
+                          actions:{
+                            incrementAction(context,num){
+                              //异步 操作,5秒后加100
+                              setTimeout(function(){
+                                context.commit('increment',num);
+                              },5000);
+                            }
+                          }
+                        });
+                        new Vue({
+                          el:"#app",
+                          store,
+                          data:{
+                            msg:'vuex的使用'
+                          },
+                          methods:{
+                            add(){
+                              this.$store.commit('increment',10);
+                              this.$store.commit('updateName','zxq');
+                              this.$store.dispatch("incrementAction",100);
+                            }
+                          },
+                          components:{
+                            counter
+                          }
+                        })
+                      </script>
+                      </html>
+          3.通过vuex实现登录和购物车数量:
+                实现思路:由于本项目并不是很复杂,能用到vuex管理的状态并不多,所以我们选择了nav-header中存在购物车数量显示(cartCount)和登录状态的用户显示(nickName),
+                引入vuex后,定义state和mutations,然后在需要使用的调用mutations中的方法,并把state中的值渲染到页面中:
+                    1.首先引入vuex:
+                        在带有全局注册vue的mian.js中:
+                          //引入vuex
+                          import Vuex from 'vuex';
+                          //调用vuex
+                          Vue.use(Vuex);
+                          //定义store中state,mutations
+                          const store=new Vuex.Store({
+                            state:{
+                              nickName:'',
+                              cartCount:0
+                            },
+                            mutations:{
+                              //更新nickName
+                              updateNickName(state,nickName){
+                                state.nickName=nickName;
+                              },
+                              //更新cartCount
+                              updateCartCount(state,cartCount){
+                                state.cartCount+=cartCount;
+                              },
+                              //页面刷新初始化cartCount
+                              initCartCount(state,cartCount){
+                                state.cartCount=cartCount;
+                              }
+                            }
+                          });
+                          //在全局实例化vue时引入store
+                          new Vue({
+                            el: '#app',
+                            router,
+                            store,
+                            components: { App },
+                            template: '<App/>'
+                          })
+                    2.在NavHeader.vue页面中调用mutations:
+                        由于需要显示购物车总数量,所以我们需要定义一个方法来获取购物车商品总数:
+                              在routers/users.js中:
+                                    //获取购物车商品总数
+                                    router.get('/getCartCount',function(req,res,next){
+                                      var userId=req.cookies.userId;
+                                      User.findOne({userId:userId},function(err,doc){
+                                        if(err){
+                                          res.json({
+                                            status:'1',
+                                            msg:err.message,
+                                            result:''
+                                          })
+                                        }else{
+                                          var cartList=doc.cartList;
+                                          let cartCount=0;
+                                          cartList.map((item)=>{
+                                            cartCount+=parseInt(item.productNum);
+                                          });
+                                          res.json({
+                                            status:'0',
+                                            msg:'',
+                                            result:cartCount
+                                          })
+                                        }
+                                      })
+                                    })
+                              在NavHeader中:
+                                    getCartCount(){
+                                          axios.get('/users/getCartCount').then((response)=>{
+                                            let res=response.data;
+                                            if(res.status=='0'){
+                                              this.$store.commit('initCartCount',res.result);
+                                            }
+                                          })
+                                     }
+                        在点击登录,刷新页面和点击登出时都需要调用对应方法来改变state中的值
+                        在computed计算state的值,然后在页面中渲染即可:
+                        computed:{
+                            //利用mapState来解构函数,可以封装函数,减少代码数量等同于下面两个函数的写法
+                            ...mapState(['nickName','cartCount'])
+                            // nickName(){
+                            //   return this.$store.state.nickName;
+                            // },
+                            // cartCount(){
+                            //   return this.$store.state.cartCount;
+                            // }
+                          },
+  第十六章:webpack的使用:
+            参考https://welcl.github.io/2018/07/12/webpack/
+           1.webpack的基础使用:
+                webpack是把所有的文件都打包成js文件,如果遇到css,sass,less等文件时会借助各种loader来转成js文件
+                1.webpack常用插件:
+                      //引入html模块插件
+                      1.html-webpack-plugin
+                      //把css文件从js中分离出来(webpack4.0后这个插件的版本也要对应上)
+                      2.extract-text-webpack-plugin
+                      //压缩JS代码：
+                      3.UglifyJsPlugin/new webpack.opyimize.UglifyJsPlugin();
+                      4.CommonsChunkPlugin/new webpack.optimize.CommonsChunkPlugin();
+                        //清理/dist文件夹插件
+                      5.clean-webpack-plugin
+                      //引入打包静态资源的插件
+                      6.copy-webpack-plugin
+                2.webpack常用的loader:
+                       1.解析css文件  css-loader
+                       2.解析sass,less,scss,stylus文件  sass-loader/less-loader/node-sass
+                       3.解析图片(png,jpg,svg,gif)  file-loader/url-loader
+                       4.给css添加前缀  postcss-loader,autoprefixer
+  第十七章:线上部署
