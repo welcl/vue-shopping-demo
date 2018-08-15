@@ -127,6 +127,12 @@
                 <a  class="btn btn-m" href="javascript:;" @click="isMdshow=false">取消</a>
             </div>
     </modal>
+    <modal v-bind:mdShow="isMdshow2"    @close="isMdshow2=false">
+      <p slot="message">当前地址不能少于一条</p>
+      <div slot="btnGroup" >
+        <a  class="btn btn-m" href="javascript:;" @click="isMdshow2=false">好的</a>
+      </div>
+    </modal>
  <nav-footer></nav-footer>
   </div>
 </template>
@@ -147,6 +153,7 @@
         isMdshow:false,
         addressId:'',
         selectedAddressId:'',
+        isMdshow2:false
       }
     },
     computed:{
@@ -203,8 +210,13 @@
         this.isMdshow=false;
       },
       delAddressConfirm(addressId){
-        this.isMdshow=true;
-        this.addressId=addressId;
+        if(this.addressList.length>1){
+          this.isMdshow=true;
+          this.addressId=addressId;
+        }else{
+          this.isMdshow2=true;
+        }
+
       },
       delAddress(){
         axios.post('/users/delAddress',{

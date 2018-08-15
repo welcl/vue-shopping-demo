@@ -45,7 +45,8 @@ router.post('/login',function(req,res,next){
         //查询到用户名或者密码错误时执行
         res.json({
           status:"1",
-          msg:"用户名或者密码错误"
+          msg:"用户名或者密码错误",
+          result:''
         });
       }
     }
